@@ -1,18 +1,16 @@
 const express = require("express");
 const crypto = require("crypto");
-// const lf = require("./leticiaFramework.js");
+const cookieParser = require("cookie-parser");
 const app = express();
 
-// console.log(lf.soma(10, 4.5), lf.outra);
-
-app.use(express.static("./public")); //Define o local dos arquivos estáticos
-app.set("view engine", "pug"); //Define o motor de renderizacao das minhas paginas dinamicas
-app.set("views", "./views"); //Define o local onde estão as minhas páginas dinâmicas
+app.use(express.static("./public"));
+app.set("view engine", "pug");
+app.set("views", "./views");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
-//Lista de usuários
 const users = [
     {
         uid: 1,
@@ -54,7 +52,6 @@ const users = [
 
 let session = {};
 
-// Função de autenticação
 function autenticador(email, password) {
     let count;
     let token;
@@ -71,58 +68,44 @@ function autenticador(email, password) {
     return null;
 }
 
-// Função para gerar um token baseado nas informações do usuário
 function gerarToken(user) {
     const tokenBase = `${user.uid}-${user.email}-${Date.now()}`;
-    return crypto.createHash("sha256").update(tokenBase).digest("hex"); //Cria um hash SHA-256 com o token base
+    return crypto.createHash("sha256").update(tokenBase).digest("hex");
 }
 
-// Middleware de autenticação
 function authMiddleware(req, res, next) {
-    const { authToken } = req.query;
+    const authToken = req.cookies.authToken;
 
     if (session.authToken === authToken) {
         req.user = session.user;
-        console.log(session.user);
         next();
     } else {
-        console.log(session.user);
         res.status(401).redirect("/");
     }
 }
 
-//Rota principal: wwww.exemplo.br/
 app.get("/", (_, res) => {
     res.render("login");
 });
 
-// Rota de autenticação
 app.post("/authenticated", (req, res) => {
     const { email, password } = req.body;
     const authResult = autenticador(email, password);
-    session = autenticador(email, password);
+    session = authResult;
 
     if (authResult) {
+        res.cookie("authToken", authResult.authToken, { httpOnly: true });
         res.status(200).json({
             message: "Login realizado com sucesso!",
-            authToken: authResult.authToken,
         });
-        //res.redirect(`/home?token=${authResult.token}`);
     } else {
         res.status(401).json({ message: "Usuário ou senha inválidos" });
     }
 });
 
-// Rota protegida - Home
 app.get("/home", authMiddleware, (req, res) => {
-    res.render("home", {
-        produtos,
-        user: session.user,
-        authToken: session.authToken,
-    });
+    res.render("home", { produtos, user: session.user });
 });
-
-// Produtos para exibição
 
 const produtos = [
     {
@@ -169,22 +152,14 @@ const produtos = [
     },
 ];
 
-// Rota protegida - Produtos
 app.get("/produtos", authMiddleware, (req, res) => {
-    res.render("produtos", { authToken: session.authToken, produtos });
+    res.render("produtos", { produtos });
 });
 
-// Rota protegida - Cadastro
 app.get("/cadastro", authMiddleware, (req, res) => {
-    res.render("cadastro", { authToken: session.authToken });
+    res.render("cadastro");
 });
 
-// Rota protegida - Sobre
-app.get("/sobre", (req, res) => {
-    res.render("sobre");
-});
-
-// Iniciar o servidor
 const server = app.listen(3000, "0.0.0.0", () => {
     const host = server.address().address;
     const port = server.address().port;

@@ -9,12 +9,14 @@ html(lang="pt-br")
   body
     header
       .pure-menu.pure-menu-horizontal
-        a.pure-menu-heading.pure-menu-link(href="/home") Home
+        a.pure-menu-heading.pure-menu-link(href="/home") Gadget Store
         ul.pure-menu-list
           li.pure-menu-item
             a.pure-menu-link(href=`/produtos?authToken=${authToken}`) Produtos
           li.pure-menu-item
             a.pure-menu-link(href=`/cadastro?authToken=${authToken}`) Cadastro
+          li.pure-menu-item
+            a.pure-menu-link(href=`/sobre?authToken=${authToken}`) Sobre nós
     main
       block content
     footer

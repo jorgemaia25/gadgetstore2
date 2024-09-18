@@ -1,8 +1,11 @@
 extends layout2
 
 block content
+  .home-header
+  h1 Saldão em PC GAMER e IMPRESSORAS
+  img(src="/images/informatica.jpg.jpg" alt="Banner da loja" style="width:100%; height:auto;")
   .content
-    h1 Produtos Disponíveis
+    h2 Confira nossas principais ofertas
     if produtos.length
       each produto in produtos
         .produto

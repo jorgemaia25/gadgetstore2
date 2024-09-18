@@ -14,14 +14,16 @@ body {
     font-style: normal;
 }
 
+
 header, footer {
-    background: #afc9e4;
+    background: #65a1e2;
+    color: #fff;
     text-align: center;
     padding: 1em 0;
 }
 
 .pure-menu-link {
-    color: #036794;
+    color: #1e1f1f;
 }
 
 header .pure-menu, footer .footer-content {
@@ -74,3 +76,28 @@ main {
 .error {
     color: red;
 }
+
+.xl{
+    color:#ff1f1f;
+    font-size: 80%;
+   
+}
+
+ ul.pure-menu-list{
+    display: flex;
+}
+ a.pure-menu-heading.pure-menu-link{
+     font-weight: bold;
+ }
+
+.home-header {
+  display: flex;
+  justify-content: center;
+}
+
+.home-header img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
